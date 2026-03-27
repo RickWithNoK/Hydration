@@ -1,61 +1,60 @@
-//
-//  ContentView.swift
-//  Hydration Game
-//
-//  Created by csuftitan on 3/26/26.
-//
-
 import SwiftUI
-import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
-
+    @State private var totalWater = 0
+    
+    let goal = 2000
+    
+    var progress: Double {
+        Double(totalWater) / Double(goal)
+    }
+    
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
+        VStack(spacing: 20) {
+            
+            Text("💧 \(totalWater) ml")
+                .font(.largeTitle)
+            
+            HStack(spacing: 15) {
+                
+                Button("250 ml") {
+                    totalWater += 250
                 }
-                .onDelete(perform: deleteItems)
+                
+                Button("500 ml") {
+                    totalWater += 500
+                }
+                
+                Button("1000 ml") {
+                    totalWater += 1000
+                }
+                
+                Button("Reset") {
+                    totalWater = 0
+                }
+                .foregroundStyle(.red)
+                    
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
-        } detail: {
-            Text("Select an item")
+            .buttonStyle(.borderedProminent)
         }
-    }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
-            }
+            
+        ProgressView(value: progress)
+            .tint(progress >= 1.0 ? .green : .blue)
+            .padding()
+        
+        Text("\(Int(progress * 100))% of daily goal")
+            .font(.headline)
+        
+        if totalWater >= goal {
+            Text("Goal Reached!")
+                .font(.title2)
+                .foregroundStyle(.green)
+            
         }
     }
 }
-
+    
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
 }
+
