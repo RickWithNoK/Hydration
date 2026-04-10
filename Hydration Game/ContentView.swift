@@ -17,6 +17,10 @@ struct ContentView: View {
                 .tabItem {
                     Label("Pet", systemImage: "heart.fill")
                 }
+            QuestView()
+                .tabItem {
+                    Label("Quest", systemImage: "star.fill")
+                }
         }
     }
 }

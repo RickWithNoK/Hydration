@@ -10,7 +10,7 @@ struct HomeView: View {
 
     var progress: Double {
         guard let data = waterData.first else { return 0.0 }
-        return Double(data.totalWater) / Double(goal)
+        return min(Double(data.totalWater) / Double(goal), 1.0)
     }
 
     var body: some View {
