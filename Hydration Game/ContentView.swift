@@ -1,60 +1,90 @@
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
-    @State private var totalWater = 0
+    @Query var waterData: [WaterData]
+    @Environment(\.modelContext) var context
     
     let goal = 2000
     
     var progress: Double {
-        Double(totalWater) / Double(goal)
+        guard let data = waterData.first else { return 0.0 }
+        return Double(data.totalWater) / Double(goal)
     }
     
     var body: some View {
         VStack(spacing: 20) {
             
-            Text("💧 \(totalWater) ml")
-                .font(.largeTitle)
-            
-            HStack(spacing: 15) {
+            if let data = waterData.first {
                 
-                Button("250 ml") {
-                    totalWater += 250
-                }
+                Text("💧 \(data.totalWater) ml")
+                    .font(.largeTitle)
                 
-                Button("500 ml") {
-                    totalWater += 500
+                HStack(spacing: 15) {
+                    Button("250 ml") {
+                        addWater(250, to: data)
+                    }
+                    
+                    Button("500 ml") {
+                        addWater(500, to: data)
+                    }
+                    
+                    Button("1000 ml") {
+                        addWater(1000, to: data)
+                    }
                 }
-                
-                Button("1000 ml") {
-                    totalWater += 1000
-                }
+                .buttonStyle(.borderedProminent)
                 
                 Button("Reset") {
-                    totalWater = 0
+                    data.totalWater = 0
+                    data.lastUpdated = Date()
                 }
                 .foregroundStyle(.red)
-                    
+                
+                ProgressView(value: progress)
+                    .tint(progress >= 1.0 ? .green : .blue)
+                    .padding()
+                
+                Text("\(Int(progress * 100))% of daily goal")
+                    .font(.headline)
+                
+                if data.totalWater >= goal {
+                    Text("🎉 Goal Reached!")
+                        .font(.title2)
+                        .foregroundStyle(.green)
+                }
+                
+            } else {
+                Text("Loading hydration data...")
+                    .font(.headline)
             }
-            .buttonStyle(.borderedProminent)
         }
-            
-        ProgressView(value: progress)
-            .tint(progress >= 1.0 ? .green : .blue)
-            .padding()
-        
-        Text("\(Int(progress * 100))% of daily goal")
-            .font(.headline)
-        
-        if totalWater >= goal {
-            Text("Goal Reached!")
-                .font(.title2)
-                .foregroundStyle(.green)
-            
+        .padding()
+        .onAppear {
+            if waterData.isEmpty {
+                let newData = WaterData()
+                context.insert(newData)
+            } else if let data = waterData.first {
+                resetIfNewDay(data)
+            }
+        }
+    }
+
+    func addWater(_ amount: Int, to data: WaterData) {
+        resetIfNewDay(data)
+        data.totalWater += amount
+        data.lastUpdated = Date()
+    }
+
+    func resetIfNewDay(_ data: WaterData) {
+        if !Calendar.current.isDate(data.lastUpdated, inSameDayAs: Date()) {
+            data.totalWater = 0
+            data.lastUpdated = Date()
         }
     }
 }
-    
+
 #Preview {
     ContentView()
+        .modelContainer(for: WaterData.self, inMemory: true)
 }
-
