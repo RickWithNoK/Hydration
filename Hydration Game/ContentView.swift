@@ -13,6 +13,10 @@ struct ContentView: View {
                 .tabItem {
                     Label("Stats", systemImage: "chart.bar.fill")
                 }
+            PetView()
+                .tabItem {
+                    Label("Pet", systemImage: "heart.fill")
+                }
         }
     }
 }
