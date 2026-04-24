@@ -6,19 +6,42 @@ struct PetView: View {
 
     let goal = 2000
 
-    var totalWater: Int {
-        waterData.first?.totalWater ?? 0
+    var data: WaterData? {
+        waterData.first
     }
 
-    // Hydra growth logic (infinite, slows down over time)
+    var totalWater: Int {
+        data?.totalWater ?? 0
+    }
+
+    var streak: Int {
+        data?.streak ?? 0
+    }
+
+    var bestStreak: Int {
+        data?.bestStreak ?? 0
+    }
+
+    // Smooth streak scaling (capped)
+    var streakBoost: Double {
+        let boost = 1.0 + (Double(streak) / 3.0 * 0.1)
+        return min(boost, 2.0)
+    }
+
+    var boostedWater: Double {
+        Double(totalWater) * streakBoost
+    }
+
+    // Hydra growth (infinite but slows)
     var hydraHeads: Int {
-        max(1, Int(sqrt(Double(totalWater) / 500.0)))
+        max(1, Int(sqrt(boostedWater / 500.0)))
     }
 
     var hydraDisplay: String {
         String(repeating: "🐉", count: hydraHeads)
     }
 
+    // Mood system
     var petMood: String {
         if totalWater >= goal {
             return "ecstatic"
@@ -44,6 +67,21 @@ struct PetView: View {
         }
     }
 
+    // Streak milestones
+    var streakMessage: String {
+        if streak >= 30 {
+            return "Legendary streak! Your hydra is evolving rapidly."
+        } else if streak >= 14 {
+            return "Huge streak! Your hydra feels powerful."
+        } else if streak >= 7 {
+            return "One-week streak! Your hydra is getting stronger."
+        } else if streak >= 3 {
+            return "Nice streak! Growth boost activated."
+        } else {
+            return "Reach a 3-day streak to boost hydra growth."
+        }
+    }
+
     var body: some View {
         VStack(spacing: 20) {
 
@@ -51,31 +89,49 @@ struct PetView: View {
                 .font(.largeTitle)
                 .bold()
 
-            // Hydra display (growing heads)
+            // Hydra visual
             Text(hydraDisplay)
                 .font(.system(size: 60))
                 .multilineTextAlignment(.center)
 
-            // Head count
             Text("Heads: \(hydraHeads)")
                 .font(.headline)
 
-            // Mood message
+            // Mood
             Text(moodMessage)
                 .font(.title3)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
 
-            // Water info
+            // Water
             Text("Water today: \(totalWater) ml")
                 .font(.headline)
+
+            // Streak info
+            Text("Current Streak: \(streak) days")
+                .font(.headline)
+                .foregroundStyle(.orange)
+
+            Text("Best Streak: \(bestStreak) days")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+
+            Text("Streak Boost: \(String(format: "%.1fx", streakBoost))")
+                .font(.headline)
+                .foregroundStyle(.purple)
+
+            Text(streakMessage)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
 
             // Progress bar
             ProgressView(value: Double(totalWater), total: Double(goal))
                 .tint(totalWater >= goal ? .green : .blue)
                 .padding(.horizontal)
 
-            // Feedback message
+            // Feedback
             if totalWater >= goal {
                 Text("Your hydra grew stronger today.")
                     .foregroundStyle(.green)

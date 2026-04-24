@@ -72,10 +72,37 @@ struct HomeView: View {
 
     func addWater(_ amount: Int, to data: WaterData) {
         resetIfNewDay(data)
+
+        let wasBelowGoal = data.totalWater < goal
+
         data.totalWater += amount
         data.lastUpdated = Date()
-    }
 
+        if wasBelowGoal && data.totalWater >= goal {
+            updateStreak(for: data)
+        }
+    }
+    func updateStreak(for data: WaterData) {
+        let today = Date()
+
+        if let lastGoalDate = data.lastGoalDate {
+            if Calendar.current.isDate(lastGoalDate, inSameDayAs: today) {
+                return
+            }
+
+            if Calendar.current.isDateInYesterday(lastGoalDate) {
+                data.streak += 1
+            } else {
+                data.streak = 1
+            }
+        } else {
+            data.streak = 1
+        }
+
+        data.lastGoalDate = today
+        data.bestStreak = max(data.bestStreak, data.streak)
+    }
+    
     func resetIfNewDay(_ data: WaterData) {
         if !Calendar.current.isDate(data.lastUpdated, inSameDayAs: Date()) {
             data.totalWater = 0

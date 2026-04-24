@@ -19,6 +19,16 @@ struct StatsView: View {
                 Text("Daily Goal: \(goal) ml")
                     .font(.title3)
 
+                Text("🔥 Current Streak: \(data.streak) days")
+                    .font(.title3)
+
+                Text("🏆 Best Streak: \(data.bestStreak) days")
+                    .font(.title3)
+
+                Text("Hydra Boost: \(streakBoostText(for: data.streak))")
+                    .font(.headline)
+                    .foregroundStyle(.purple)
+
                 Text("Last Updated:")
                     .font(.headline)
 
@@ -31,6 +41,11 @@ struct StatsView: View {
             }
         }
         .padding()
+    }
+
+    func streakBoostText(for streak: Int) -> String {
+        let boost = 1.0 + (Double(streak / 3) * 0.1)
+        return String(format: "%.1fx", boost)
     }
 }
 
