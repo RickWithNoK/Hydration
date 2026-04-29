@@ -4,10 +4,12 @@ import SwiftData
 struct PetView: View {
     @Query var waterData: [WaterData]
 
-    let goal = 2000
-
     var data: WaterData? {
         waterData.first
+    }
+
+    var goal: Int {
+        data?.dailyGoal ?? 2000
     }
 
     var totalWater: Int {
@@ -45,7 +47,7 @@ struct PetView: View {
     var petMood: String {
         if totalWater >= goal {
             return "ecstatic"
-        } else if totalWater >= 1000 {
+        } else if totalWater >= goal / 2 {
             return "content"
         } else if totalWater > 0 {
             return "sleepy"
