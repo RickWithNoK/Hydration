@@ -8,11 +8,17 @@ struct QuestView: View {
         waterData.first?.totalWater ?? 0
     }
 
+    var dailyGoal: Int {
+        waterData.first?.dailyGoal ?? 2000
+    }
+
     var quests: [(title: String, completed: Bool)] {
-        [
-            ("Drink 500 ml", totalWater >= 500),
-            ("Drink 1000 ml", totalWater >= 1000),
-            ("Reach 2000 ml goal", totalWater >= 2000)
+        let half = dailyGoal / 2
+        let quarter = dailyGoal / 4
+        return [
+            ("Drink \(quarter) ml", totalWater >= quarter),
+            ("Drink \(half) ml", totalWater >= half),
+            ("Reach \(dailyGoal) ml goal", totalWater >= dailyGoal)
         ]
     }
 
