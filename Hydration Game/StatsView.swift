@@ -4,8 +4,6 @@ import SwiftData
 struct StatsView: View {
     @Query var waterData: [WaterData]
 
-    let goal = 2000
-
     var body: some View {
         VStack(spacing: 20) {
             if let data = waterData.first {
@@ -16,7 +14,7 @@ struct StatsView: View {
                 Text("Current Water: \(data.totalWater) ml")
                     .font(.title3)
 
-                Text("Daily Goal: \(goal) ml")
+                Text("Daily Goal: \(data.dailyGoal) ml")
                     .font(.title3)
 
                 Text("🔥 Current Streak: \(data.streak) days")
