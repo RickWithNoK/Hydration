@@ -1,17 +1,25 @@
 import SwiftUI
 import SwiftData
 
+/// Shows the three daily quests for the current day.
+///
+/// Quest thresholds scale automatically with the user's `dailyGoal`:
+/// 25 %, 50 %, and 100 % of the goal. Each quest displays a checkmark
+/// when its threshold is met, and a completion banner appears when all three are done.
 struct QuestView: View {
     @Query var waterData: [WaterData]
 
+    /// Total water consumed today in ml.
     var totalWater: Int {
         waterData.first?.totalWater ?? 0
     }
 
+    /// The user's daily goal in ml.
     var dailyGoal: Int {
         waterData.first?.dailyGoal ?? 2000
     }
 
+    /// The three daily quests, with titles and completion state derived from `dailyGoal`.
     var quests: [(title: String, completed: Bool)] {
         let half = dailyGoal / 2
         let quarter = dailyGoal / 4
@@ -22,6 +30,7 @@ struct QuestView: View {
         ]
     }
 
+    /// Number of quests whose threshold has been reached today.
     var completedQuestCount: Int {
         quests.filter { $0.completed }.count
     }
@@ -63,6 +72,7 @@ struct QuestView: View {
         .padding()
     }
 
+    /// A single styled row showing the quest name and a completion checkmark.
     @ViewBuilder
     func questRow(title: String, completed: Bool) -> some View {
         HStack {

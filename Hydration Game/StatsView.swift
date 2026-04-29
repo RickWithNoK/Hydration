@@ -1,6 +1,9 @@
 import SwiftUI
 import SwiftData
 
+/// Displays a read-only summary of the user's hydration stats:
+/// current intake, daily goal, streak history, hydra boost multiplier,
+/// and the last-updated timestamp.
 struct StatsView: View {
     @Query var waterData: [WaterData]
 
@@ -41,6 +44,8 @@ struct StatsView: View {
         .padding()
     }
 
+    /// Formats the streak boost multiplier as a string (e.g. "1.2x").
+    /// Uses integer division by 3 so the boost steps up every third streak day.
     func streakBoostText(for streak: Int) -> String {
         let boost = 1.0 + (Double(streak / 3) * 0.1)
         return String(format: "%.1fx", boost)

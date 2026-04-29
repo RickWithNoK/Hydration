@@ -1,6 +1,12 @@
 import SwiftUI
 import SwiftData
 
+/// Displays the user's Hydra pet, whose appearance and mood are driven
+/// by how much water has been consumed and the current streak.
+///
+/// - The number of dragon heads grows with boosted water intake.
+/// - The pet's mood ranges from "thirsty" to "ecstatic" based on goal progress.
+/// - Streak milestones unlock messages and a growth multiplier (up to 2×).
 struct PetView: View {
     @Query var waterData: [WaterData]
 
@@ -8,10 +14,12 @@ struct PetView: View {
         waterData.first
     }
 
+    /// The user's daily goal in ml, read from persisted data.
     var goal: Int {
         data?.dailyGoal ?? 2000
     }
 
+    /// Total water consumed today in ml.
     var totalWater: Int {
         data?.totalWater ?? 0
     }
@@ -24,26 +32,30 @@ struct PetView: View {
         data?.bestStreak ?? 0
     }
 
-    // Smooth streak scaling (capped)
+    /// Streak-based multiplier applied to water intake for hydra growth calculations.
+    /// Scales as `1.0 + (streak / 3) * 0.1`, capped at 2.0×.
     var streakBoost: Double {
         let boost = 1.0 + (Double(streak) / 3.0 * 0.1)
         return min(boost, 2.0)
     }
 
+    /// `totalWater` scaled by the streak boost multiplier.
     var boostedWater: Double {
         Double(totalWater) * streakBoost
     }
 
-    // Hydra growth (infinite but slows)
+    /// Number of dragon heads shown, derived from `boostedWater` via a square-root curve.
+    /// Minimum of 1 head; slows as intake grows.
     var hydraHeads: Int {
         max(1, Int(sqrt(boostedWater / 500.0)))
     }
 
+    /// String of dragon emoji, one per head.
     var hydraDisplay: String {
         String(repeating: "🐉", count: hydraHeads)
     }
 
-    // Mood system
+    /// The pet's current mood, determined by progress toward the daily goal.
     var petMood: String {
         if totalWater >= goal {
             return "ecstatic"
@@ -56,6 +68,7 @@ struct PetView: View {
         }
     }
 
+    /// Human-readable message matching the current `petMood`.
     var moodMessage: String {
         switch petMood {
         case "ecstatic":
@@ -69,7 +82,7 @@ struct PetView: View {
         }
     }
 
-    // Streak milestones
+    /// Motivational message tied to streak milestone thresholds (3, 7, 14, 30 days).
     var streakMessage: String {
         if streak >= 30 {
             return "Legendary streak! Your hydra is evolving rapidly."

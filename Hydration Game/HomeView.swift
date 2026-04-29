@@ -2,18 +2,28 @@
 import SwiftUI
 import SwiftData
 
+/// The main entry screen of the app.
+///
+/// Lets the user log water intake via preset buttons or a custom amount,
+/// view progress toward their daily goal, undo the last drink, reset the day,
+/// and change their daily goal target.
 struct HomeView: View {
     @Query var waterData: [WaterData]
     @Environment(\.modelContext) var context
 
+    /// Bound to the custom-amount text field.
     @State private var customAmount: String = ""
+    /// Controls visibility of the goal-editor sheet.
     @State private var showGoalEditor = false
+    /// Holds the draft goal value while the editor sheet is open.
     @State private var newGoalText: String = ""
 
+    /// The user's current daily goal, falling back to 2000 ml if no data exists yet.
     var goal: Int {
         waterData.first?.dailyGoal ?? 2000
     }
 
+    /// Progress toward the daily goal, clamped to [0, 1].
     var progress: Double {
         guard let data = waterData.first else { return 0.0 }
         return min(Double(data.totalWater) / Double(data.dailyGoal), 1.0)
@@ -109,6 +119,7 @@ struct HomeView: View {
         }
     }
 
+    /// The sheet content for editing the daily goal.
     var goalEditorSheet: some View {
         NavigationStack {
             Form {
@@ -135,6 +146,8 @@ struct HomeView: View {
         }
     }
 
+    /// Logs a drink of `amount` ml, handles daily reset, saves `lastDrinkAmount` for undo,
+    /// and triggers a streak update if the goal is crossed for the first time today.
     func addWater(_ amount: Int, to data: WaterData) {
         resetIfNewDay(data)
 
@@ -148,6 +161,8 @@ struct HomeView: View {
             updateStreak(for: data)
         }
     }
+    /// Updates the streak when the user first hits their goal on a given day.
+    /// Increments for consecutive days, resets if a day was missed.
     func updateStreak(for data: WaterData) {
         let today = Date()
 
@@ -169,6 +184,7 @@ struct HomeView: View {
         data.bestStreak = max(data.bestStreak, data.streak)
     }
     
+    /// Resets today's water intake to zero if `lastUpdated` is from a previous calendar day.
     func resetIfNewDay(_ data: WaterData) {
         if !Calendar.current.isDate(data.lastUpdated, inSameDayAs: Date()) {
             data.totalWater = 0
