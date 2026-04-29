@@ -25,6 +25,13 @@ class WaterData {
     /// The amount added in the most recent drink log, used to support undo.
     var lastDrinkAmount: Int = 0
 
+    // MARK: - History
+    /// Rolling log of the last 7 days' water intake in ml.
+    /// Index 0 = oldest day, index 6 = today. Updated on each daily reset.
+    var weeklyHistory: [Int] = []
+    /// Cumulative total of all water ever logged across all days.
+    var totalWaterAllTime: Int = 0
+
     // MARK: - Init
     init(
         totalWater: Int = 0,
@@ -33,7 +40,9 @@ class WaterData {
         bestStreak: Int = 0,
         lastGoalDate: Date? = nil,
         dailyGoal: Int = 2000,
-        lastDrinkAmount: Int = 0
+        lastDrinkAmount: Int = 0,
+        weeklyHistory: [Int] = [],
+        totalWaterAllTime: Int = 0
     ) {
         self.totalWater = totalWater
         self.lastUpdated = lastUpdated
@@ -42,6 +51,8 @@ class WaterData {
         self.lastGoalDate = lastGoalDate
         self.dailyGoal = dailyGoal
         self.lastDrinkAmount = lastDrinkAmount
+        self.weeklyHistory = weeklyHistory
+        self.totalWaterAllTime = totalWaterAllTime
     }
 
     // MARK: - Add Water
@@ -106,13 +117,20 @@ class WaterData {
 
     // MARK: - Daily Reset
     /// Resets `totalWater` to zero if the last log was on a previous calendar day.
+    /// Archives the completed day's intake into `weeklyHistory` (capped at 7 entries).
     /// Called automatically on app launch and before each water addition.
     func resetDailyWaterIfNeeded() {
         let calendar = Calendar.current
 
         if !calendar.isDate(lastUpdated, inSameDayAs: Date()) {
+            // Archive yesterday's total before resetting
+            weeklyHistory.append(totalWater)
+            if weeklyHistory.count > 7 {
+                weeklyHistory.removeFirst(weeklyHistory.count - 7)
+            }
             totalWater = 0
             lastUpdated = Date()
+            lastDrinkAmount = 0
         }
     }
 

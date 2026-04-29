@@ -15,9 +15,12 @@ A SwiftUI iOS app that gamifies daily water intake tracking. Log drinks, grow yo
 - Auto-resets intake at the start of each new day
 
 ### 📊 Stats
-- Current water intake and daily goal
+- Current water intake and daily goal with % progress
 - Current and best streak (in days)
 - Hydra boost multiplier derived from streak
+- **7-day bar chart** of daily intake vs. goal line (Swift Charts)
+- **7-day rolling average** intake
+- **All-time total** water ever logged
 - Last updated timestamp
 
 ### 🐉 Pet (Hydra)

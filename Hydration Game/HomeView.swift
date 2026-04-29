@@ -155,6 +155,7 @@ struct HomeView: View {
 
         data.lastDrinkAmount = amount
         data.totalWater += amount
+        data.totalWaterAllTime += amount
         data.lastUpdated = Date()
 
         if wasBelowGoal && data.totalWater >= data.dailyGoal {
@@ -185,12 +186,9 @@ struct HomeView: View {
     }
     
     /// Resets today's water intake to zero if `lastUpdated` is from a previous calendar day.
+    /// Delegates to `WaterData.resetDailyWaterIfNeeded()` which also archives history.
     func resetIfNewDay(_ data: WaterData) {
-        if !Calendar.current.isDate(data.lastUpdated, inSameDayAs: Date()) {
-            data.totalWater = 0
-            data.lastUpdated = Date()
-            data.lastDrinkAmount = 0
-        }
+        data.resetDailyWaterIfNeeded()
     }
 }
 
