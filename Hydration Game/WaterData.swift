@@ -12,6 +12,8 @@ class WaterData {
     var streak: Int = 0
     var bestStreak: Int = 0
     var lastGoalDate: Date? = nil
+    var dailyGoal: Int = 2000
+    var lastDrinkAmount: Int = 0
 
     // MARK: - Init
     init(
@@ -19,13 +21,17 @@ class WaterData {
         lastUpdated: Date = Date(),
         streak: Int = 0,
         bestStreak: Int = 0,
-        lastGoalDate: Date? = nil
+        lastGoalDate: Date? = nil,
+        dailyGoal: Int = 2000,
+        lastDrinkAmount: Int = 0
     ) {
         self.totalWater = totalWater
         self.lastUpdated = lastUpdated
         self.streak = streak
         self.bestStreak = bestStreak
         self.lastGoalDate = lastGoalDate
+        self.dailyGoal = dailyGoal
+        self.lastDrinkAmount = lastDrinkAmount
     }
 
     // MARK: - Add Water
@@ -34,6 +40,14 @@ class WaterData {
         lastUpdated = Date()
 
         checkGoal(goal: goal)
+    }
+
+    // MARK: - Undo Last Drink
+    func undoLastDrink() {
+        guard lastDrinkAmount > 0 else { return }
+        totalWater = max(0, totalWater - lastDrinkAmount)
+        lastDrinkAmount = 0
+        lastUpdated = Date()
     }
 
     // MARK: - Goal + Streak Logic
