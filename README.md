@@ -1,4 +1,4 @@
-# 💧 Hydration Game
+# Hydration Game
 
 A SwiftUI iOS app that gamifies daily water intake tracking. Log drinks, grow your Hydra pet, maintain streaks, and complete daily quests — all persisted with SwiftData.
 
@@ -6,7 +6,7 @@ A SwiftUI iOS app that gamifies daily water intake tracking. Log drinks, grow yo
 
 ## Features
 
-### 🏠 Home
+### Home
 - Log water with preset buttons: **250 ml**, **500 ml**, **1000 ml**
 - Enter a **custom amount** via a text field
 - **Undo** the last logged drink
@@ -14,7 +14,7 @@ A SwiftUI iOS app that gamifies daily water intake tracking. Log drinks, grow yo
 - **Set a custom daily goal** (default: 2000 ml) via an editor sheet
 - Auto-resets intake at the start of each new day
 
-### 📊 Stats
+### Stats
 - Current water intake and daily goal with % progress
 - Current and best streak (in days)
 - Hydra boost multiplier derived from streak
@@ -23,14 +23,14 @@ A SwiftUI iOS app that gamifies daily water intake tracking. Log drinks, grow yo
 - **All-time total** water ever logged
 - Last updated timestamp
 
-### 🐉 Pet (Hydra)
+### Pet (Hydra)
 - A Hydra that **grows more heads** as you drink more water
 - Head count scales via a square-root curve using boosted water
 - **Mood system**: thirsty → sleepy → content → ecstatic
 - **Streak boost** (up to 2×): more consecutive days = faster hydra growth
 - Milestone messages at 3, 7, 14, and 30-day streaks
 
-### ⭐ Quests
+### Quests
 - Three daily quests that **scale with your custom goal** (25%, 50%, 100%)
 - Checkmark indicators per quest
 - Overall completion progress bar
