@@ -1,4 +1,4 @@
-# Hydration Game
+# Hydration Game(ReHydra)
 
 A SwiftUI iOS app that gamifies daily water intake tracking. Log drinks, grow your Hydra pet, maintain streaks, and complete daily quests — all persisted with SwiftData.
 
