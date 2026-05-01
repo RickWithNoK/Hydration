@@ -146,45 +146,13 @@ struct HomeView: View {
         }
     }
 
-    /// Logs a drink of `amount` ml, handles daily reset, saves `lastDrinkAmount` for undo,
-    /// and triggers a streak update if the goal is crossed for the first time today.
+    /// Logs a drink of `amount` ml, handles daily reset, then delegates to
+    /// `WaterData.addWater(amount:goal:)` which updates all fields and streak.
     func addWater(_ amount: Int, to data: WaterData) {
         resetIfNewDay(data)
-
-        let wasBelowGoal = data.totalWater < data.dailyGoal
-
-        data.lastDrinkAmount = amount
-        data.totalWater += amount
-        data.totalWaterAllTime += amount
-        data.lastUpdated = Date()
-
-        if wasBelowGoal && data.totalWater >= data.dailyGoal {
-            updateStreak(for: data)
-        }
+        data.addWater(amount: amount, goal: data.dailyGoal)
     }
-    /// Updates the streak when the user first hits their goal on a given day.
-    /// Increments for consecutive days, resets if a day was missed.
-    func updateStreak(for data: WaterData) {
-        let today = Date()
 
-        if let lastGoalDate = data.lastGoalDate {
-            if Calendar.current.isDate(lastGoalDate, inSameDayAs: today) {
-                return
-            }
-
-            if Calendar.current.isDateInYesterday(lastGoalDate) {
-                data.streak += 1
-            } else {
-                data.streak = 1
-            }
-        } else {
-            data.streak = 1
-        }
-
-        data.lastGoalDate = today
-        data.bestStreak = max(data.bestStreak, data.streak)
-    }
-    
     /// Resets today's water intake to zero if `lastUpdated` is from a previous calendar day.
     /// Delegates to `WaterData.resetDailyWaterIfNeeded()` which also archives history.
     func resetIfNewDay(_ data: WaterData) {

@@ -56,12 +56,15 @@ class WaterData {
     }
 
     // MARK: - Add Water
-    /// Adds `amount` ml to today's total and checks whether the daily goal has been reached.
+    /// Adds `amount` ml to today's total, updates all-time total and undo support,
+    /// then checks whether the daily goal has been reached.
     /// - Parameters:
     ///   - amount: Millilitres to add.
     ///   - goal: The daily target to evaluate streaks against.
     func addWater(amount: Int, goal: Int = 2000) {
+        lastDrinkAmount = amount
         totalWater += amount
+        totalWaterAllTime += amount
         lastUpdated = Date()
 
         checkGoal(goal: goal)
