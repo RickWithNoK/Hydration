@@ -100,6 +100,36 @@ struct HomeView: View {
                         .foregroundStyle(.green)
                 }
 
+                // DEBUG — remove before shipping
+                Divider()
+
+                Text("Debug")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
+                HStack(spacing: 12) {
+                    Button("Hit Goal") {
+                        let needed = max(0, data.dailyGoal - data.totalWater)
+                        if needed > 0 {
+                            data.addWater(amount: needed, goal: data.dailyGoal)
+                        }
+                    }
+                    .font(.caption)
+                    .buttonStyle(.bordered)
+                    .tint(.purple)
+
+                    Button("Next Day") {
+                        data.weeklyHistory.append(data.totalWater)
+                        if data.weeklyHistory.count > 7 { data.weeklyHistory.removeFirst() }
+                        data.totalWater = 0
+                        data.lastDrinkAmount = 0
+                        data.lastUpdated = Date().addingTimeInterval(-25 * 3600)
+                    }
+                    .font(.caption)
+                    .buttonStyle(.bordered)
+                    .tint(.gray)
+                }
+
             } else {
                 Text("Loading hydration data...")
                     .font(.headline)
