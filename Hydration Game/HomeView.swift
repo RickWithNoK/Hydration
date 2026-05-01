@@ -123,7 +123,13 @@ struct HomeView: View {
                         if data.weeklyHistory.count > 7 { data.weeklyHistory.removeFirst() }
                         data.totalWater = 0
                         data.lastDrinkAmount = 0
-                        data.lastUpdated = Date().addingTimeInterval(-25 * 3600)
+                        // Set to today so resetDailyWaterIfNeeded won't double-fire on next drink
+                        data.lastUpdated = Date()
+                        // Rewind lastGoalDate to yesterday so the next goal hit increments the streak
+                        data.lastGoalDate = Calendar.current.date(
+                            byAdding: .day, value: -1,
+                            to: Calendar.current.startOfDay(for: Date())
+                        )
                     }
                     .font(.caption)
                     .buttonStyle(.bordered)
